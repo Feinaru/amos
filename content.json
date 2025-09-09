@@ -1,0 +1,46 @@
+{
+  "site": {
+    "brand": "האתר שלי",
+    "nav_align": "center",
+    "contact_email": "you@example.com",
+    "contact_phone": "+972501234567",
+    "whatsapp": "+972501234567"
+  },
+  "sections": [
+    {
+      "id": "home",
+      "title": "ברוכים הבאים",
+      "subtitle": "עמוד נחיתה עם גלילה",
+      "bg": "#f5f5f5",
+      "image": ""
+    },
+    {
+      "id": "about",
+      "title": "אודות",
+      "subtitle": "כמה מילים עלי/העסק",
+      "bg": "#e8f4ff",
+      "image": ""
+    },
+    {
+      "id": "gallery",
+      "title": "גלריה",
+      "subtitle": "עבודות נבחרות",
+      "bg": "#ffffff",
+      "images": []
+    },
+    {
+      "id": "services",
+      "title": "שירותים",
+      "subtitle": "מה אני מציע/ה",
+      "bg": "#eefbea",
+      "image": ""
+    },
+    {
+      "id": "contact",
+      "title": "צור קשר",
+      "subtitle": "טל׳ / וואטסאפ / מייל",
+      "bg": "#fff1f1",
+      "image": ""
+    }
+  ]
+}

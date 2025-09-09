@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block body %}
+<nav class="topbar {{ data.site.nav_align }}">
+  <div class="brand">{{ data.site.brand }}</div>
+  <div class="links">
+    {% for s in data.sections %}
+      <a href="#{{ s.id }}">{{ s.title }}</a>
+    {% endfor %}
+  </div>
+</nav>
+
+{% for s in data.sections %}
+  <section id="{{ s.id }}" style="background: {{ s.bg }}">
+    <div class="section-inner" {% if s.image %}style="background-image:url('{{ url_for('static', filename='uploads/' ~ s.image) }}')" {% endif %}>
+      <div class="content {% if s.id=='gallery' %}no-bg{% endif %}">
+        <h1>{{ s.title }}</h1>
+        <p>{{ s.subtitle }}</p>
+
+        {% if s.id == 'gallery' %}
+          {% if s.images and s.images|length > 0 %}
+            <div class="gallery-grid rtl">
+              {% for item in s.images | reverse %}
+                <a href="{{ url_for('static', filename='uploads/' ~ item.full) }}" class="g-item" dir="rtl">
+                  <img src="{{ url_for('static', filename='uploads/thumbs/' ~ item.thumb) }}" alt="gallery">
+                </a>
+              {% endfor %}
+            </div>
+            <div id="lightbox" class="lightbox hidden">
+              <img id="lightImg" alt="full">
+            </div>
+            <script>
+              (function(){
+                const items = document.querySelectorAll('.gallery-grid .g-item');
+                const box = document.getElementById('lightbox');
+                const img = document.getElementById('lightImg');
+                items.forEach(a => {
+                  a.addEventListener('click', (e)=>{
+                    e.preventDefault();
+                    img.src = a.getAttribute('href');
+                    box.classList.remove('hidden');
+                  });
+                });
+                box.addEventListener('click', ()=> box.classList.add('hidden'));
+                document.addEventListener('keydown', (e)=>{
+                  if(e.key==='Escape') box.classList.add('hidden');
+                });
+              })();
+            </script>
+          {% else %}
+            <div class="hint">עדיין לא הועלו תמונות לגלריה.</div>
+          {% endif %}
+        {% endif %}
+
+        {% if s.id == 'contact' %}
+          <div class="contact-card">
+            <h3>צור קשר</h3>
+            <form id="contactForm">
+              <label>שם</label>
+              <input type="text" id="name" placeholder="איך לפנות אליך?">
+              <label>הודעה</label>
+              <textarea id="message" rows="4" placeholder="מה תרצה לכתוב?"></textarea>
+            </form>
+            <div class="row">
+              {% if data.site.whatsapp %}
+              <a class="btn" id="whatsBtn" target="_blank" rel="noopener">שלח בוואטסאפ</a>
+              {% endif %}
+              {% if data.site.contact_email %}
+              <a class="btn alt" id="mailBtn">שלח במייל</a>
+              {% endif %}
+            </div>
+            <div class="hint">
+              טלפון: {{ data.site.contact_phone }} • מייל: {{ data.site.contact_email }}
+            </div>
+          </div>
+          <script>
+            (function(){
+              const name = document.getElementById('name');
+              const msg = document.getElementById('message');
+              const whats = document.getElementById('whatsBtn');
+              const mail = document.getElementById('mailBtn');
+              function buildText(){
+                let t = "";
+                if(name && name.value) t += "שם: " + name.value + "\n";
+                if(msg && msg.value) t += "הודעה: " + msg.value + "\n";
+                return encodeURIComponent(t);
+              }
+              if(whats){
+                const phone = "{{ data.site.whatsapp|replace('+','') }}";
+                whats.addEventListener('click', function(e){
+                  const url = "https://wa.me/" + phone + "?text=" + buildText();
+                  this.setAttribute('href', url);
+                });
+              }
+              if(mail){
+                mail.addEventListener('click', function(e){
+                  const email = "{{ data.site.contact_email }}";
+                  const subject = encodeURIComponent("פניה מהאתר");
+                  const body = buildText();
+                  const url = "mailto:" + email + "?subject=" + subject + "&body=" + body;
+                  window.location.href = url;
+                });
+              }
+            })();
+          </script>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="admin-wrapper">
+  <form class="card wide" method="post" action="{{ url_for('admin_save') }}" enctype="multipart/form-data">
+    <div class="card-header">
+      <h2>ממשק ניהול - עמוד יחיד</h2>
+      <div>
+        <a class="btn" href="{{ url_for('index') }}">לצפייה באתר</a>
+        <a class="btn" href="{{ url_for('logout') }}">התנתק</a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <fieldset>
+      <legend>הגדרות אתר</legend>
+      <label>שם המותג / לוגו (טקסט)</label>
+      <input type="text" name="brand" value="{{ data.site.brand }}">
+      <label>יישור תפריט עליון</label>
+      <select name="nav_align">
+        <option value="right" {{ 'selected' if data.site.nav_align=='right' else '' }}>ימין</option>
+        <option value="center" {{ 'selected' if data.site.nav_align=='center' else '' }}>מרכז</option>
+        <option value="left" {{ 'selected' if data.site.nav_align=='left' else '' }}>שמאל</option>
+      </select>
+
+      <div class="row two">
+        <div>
+          <label>אימייל ליצירת קשר</label>
+          <input type="email" name="contact_email" value="{{ data.site.contact_email }}">
+        </div>
+        <div>
+          <label>טלפון</label>
+          <input type="text" name="contact_phone" value="{{ data.site.contact_phone }}">
+        </div>
+      </div>
+      <label>מספר וואטסאפ (בינלאומי, עם +)</label>
+      <input type="text" name="whatsapp" value="{{ data.site.whatsapp }}">
+    </fieldset>
+
+    {% for s in data.sections %}
+    <fieldset>
+      <legend>מקטע: {{ s.id }}</legend>
+      {% if s.id == 'gallery' %}
+        <div class="hint">העלה כמה תמונות (multiple). נוצרות תמונות ממוזערות אוטומטית לתצוגה מהירה.</div>
+        <label>העלה תמונות לגלריה</label>
+        <input type="file" name="gallery_images" accept="image/*" multiple>
+        {% if s.images and s.images|length>0 %}
+          <div class="preview-grid rtl">
+            {% for item in s.images | reverse %}
+              <div class="preview-item">
+                <img src="{{ url_for('static', filename='uploads/thumbs/' ~ item.thumb) }}" alt="preview">
+                <form method="post" action="{{ url_for('delete_image') }}">
+                  <input type="hidden" name="full" value="{{ item.full }}">
+                  <input type="hidden" name="thumb" value="{{ item.thumb }}">
+                  <button class="btn danger" type="submit">מחק</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="hint">אין עדיין תמונות בגלריה.</div>
+        {% endif %}
+      {% else %}
+        <div class="row two">
+          <div>
+            <label>כותרת</label>
+            <input type="text" name="title_{{ s.id }}" value="{{ s.title }}">
+          </div>
+          <div>
+            <label>תיאור קצר</label>
+            <input type="text" name="subtitle_{{ s.id }}" value="{{ s.subtitle }}">
+          </div>
+        </div>
+        <div class="row two">
+          <div>
+            <label>צבע רקע (hex)</label>
+            <input type="text" name="bg_{{ s.id }}" value="{{ s.bg }}">
+          </div>
+          <div>
+            <label>תמונה למקטע (אופציונלי)</label>
+            <input type="file" name="image_{{ s.id }}" accept="image/*">
+          </div>
+        </div>
+        {% if s.image %}
+          <div class="preview">
+            <img src="{{ url_for('static', filename='uploads/' ~ s.image) }}" alt="preview">
+          </div>
+        {% endif %}
+      {% endif %}
+    </fieldset>
+    {% endfor %}
+
+    <button type="submit">שמירה</button>
+  </form>
+</div>
+{% endblock %}

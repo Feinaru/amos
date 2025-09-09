@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="admin-wrapper">
+  <form class="card" method="post" action="{{ url_for('login') }}">
+    <h2>התחברות לממשק ניהול</h2>
+    <label>סיסמה</label>
+    <input type="password" name="password" required>
+    <button type="submit">התחבר</button>
+    <p class="hint">ברירת מחדל: admin123 (מומלץ לשנות בקובץ .env)</p>
+  </form>
+</div>
+{% endblock %}
